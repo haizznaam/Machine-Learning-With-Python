@@ -14,5 +14,6 @@
 | 4.    | Support Vector Machine (SVM)| 
 | 5.    | Decision Tree|  
 | 6.    | PCA|    
+| 7.    | K-Means|    
 
 

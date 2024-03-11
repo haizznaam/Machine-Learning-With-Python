@@ -1,0 +1,320 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel} % Permite escrever em português
+\usepackage[utf8]{inputenc} % Permite digitar acentuações diretamente
+\usepackage{amsmath} % Permite diagramação matemática avançada
+\usepackage{parskip} % Remove identação de parágrafos e adiciona espaço entre eles
+\usepackage[usenames,dvipsnames,table]{xcolor} % Permite usar cores
+\usepackage{fancyvrb} % Desenha conteúdos verbatim com caixas ao redor
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref} % Permite adicionar url's clicáveis
+
+
+% Configura a exibição de urls
+\hypersetup{
+  colorlinks = true,
+  urlcolor   = blue,
+  linkcolor  = blue,
+  citecolor  = red
+}
+
+	
+\usepackage[margin=1in]{geometry}		% For setting margins
+\usepackage{amsmath}				% For Math
+\usepackage{fancyhdr}				% For fancy header/footer
+\usepackage{graphicx}				% For including figure/image
+\usepackage{cancel}					% To use the slash to cancel out stuff in work
+
+
+% ------------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------------
+
+
+\title{Machine Learning 2}
+
+\normalside \author{Midterm Review }
+
+\date{\small{Tran Hai Nam - 11219279 - DSEB }}
+
+%%%%%%%%%%%%%%%%%%%%%%
+% Set up fancy header/footer
+\pagestyle{fancy}
+\fancyhead[LO,L]{Tran Hai Nam}
+\fancyhead[CO,C]{ML2 - Midterm Review}
+\fancyhead[RO,R]{\today}
+\fancyfoot[LO,L]{}
+\fancyfoot[CO,C]{\thepage}
+\fancyfoot[RO,R]{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\maketitle
+
+\large \section{Dimensional Reduction}
+\\
+\Large{\textbf{Problem 1}}\\
+What are the steps of PCA? Give your reasons for each step if possible.\\
+
+\large{\textbf{Solution.}}
+
+\normalsize Steps of PCA involves:
+\begin{enumerate}
+    \item \textbf{Standardize the data}: If the features in the dataset have different scales, it is important to standardize them (subtract the mean and divide by the standard deviation) to ensure that each feature contributes equally to the analysis.
+
+    
+    \item \textbf{Compute the covariance matrix}: The covariance matrix measures the relationships between the different features in the dataset. It provides information about how the features vary together.
+
+    
+    \item \textbf{Calculate the eigenvectors and eigenvalues}: The eigenvectors and eigenvalues of the covariance matrix represent the principal components. The eigenvectors are the directions of maximum variance, while the corresponding eigenvalues indicate the amount of variance explained by each principal component.
+
+    
+    \item \textbf{Select the principal components}: To reduce the dimensionality, you can select a subset of the principal components based on their corresponding eigenvalues
+
+    
+    \item \textbf{Transform the data:} Multiply the standardized data by the selected principal components to obtain the transformed dataset with reduced dimensionality. Each data point is projected onto the new principal component axes.
+\end{enumerate}
+
+\Large {\textbf{Problem 2}}
+
+How to choose the number of dimensions to reduce when building PCA?\\
+
+\large{\textbf{Solution.}}
+\normalsize There are ways to choose number of dimensions when building PCA:
+\begin{enumerate}
+    \item \textbf{Variance Explained}: Analyze the eigenvalues (variance of each principal component). Aim for a cumulative percentage of explained variance that meets your needs. Often, 80-90% is a good starting point.
+    
+    \item \textbf{Elbow Method}: Plot the scree plot (eigenvalues vs. component number). Look for the "elbow" where the explained variance starts decreasing rapidly. Components after the elbow contribute less significant variance.
+\end{enumerate}
+
+\Large {\textbf{Problem 3}}
+
+What are the limitatations of PCA?\\
+
+\large{\textbf{Solution.}}
+\normalsize
+\begin{enumerate}
+    \item \textbf{Assumes Linear Relationships}: PCA works best when the data has a linear relationship between variables. If the relationships are non-linear, PCA might not capture the underlying structure effectively.
+    
+    \item \textbf{Loss of Information}: PCA discards information by focusing on the most significant components. There's a trade-off between dimensionality reduction and the information loss that comes with it.
+
+    \item \textbf{Outlier Sensitivity}: Outliers can significantly impact the principal components identified by PCA. Extreme values can distort the principal components.
+
+    \item \textbf{Limited Interpretability}: The resulting principal components are linear combinations of original features. They might be less interpretable than the original data points.
+    
+\end{enumerate}
+
+\Large {\textbf{Problem 4}}
+
+Why do we have to use t-distribution in t-SNE?\\
+
+\large{\textbf{Solution.}}
+
+\normalsize In t-SNE (t-distributed Stochastic Neighbor Embedding), we use the t-distribution instead of the Gaussian distribution for a specific reason:
+
+\textbf{Crowding Problem Reduction}:
+
+\begin{enumerate}
+    \item[.] In low-dimensional space, t-SNE aims to maintain relative similarities between data points. The t-distribution (also known as the Cauchy distribution) has a heavier tail than the Gaussian distribution. This compensates for the original imbalance and allows t-SNE to map large distances more effectively, preventing points from appearing too close together.
+    
+\end{enumerate}
+
+$$\begin{aligned}
+    \centering
+    \includegraphics[width=0.4\linewidth]{tsne and gaussian.png}
+    \label{fig:enter-label}
+\end{aligned}$$\\
+
+\Large{\textbf{Problem 5}}
+
+Reconstruct PCA.\\
+
+\large{\textbf{Solution.}}
+
+Given dataset $X = \{x_1,x_2,...,x_n\}$ with mean $\mu = 0$.
+
+We assume there exist a low-dimension compressed representation of a data point $x_n$ given by:
+$$z_n = B^Tx_n$$
+where we compressed $x_n$ of D dimensions to $z_n$ to M dimensions (M < D), and the projection matrix is:
+$$B = [b_1,b_2,..,b_M] \in \R^{D \times M}$$
+
+Note that $z$ also has zero mean: $\mathbf{E}_z[z] = E_x[B^T x]= B^T\mathbf{E}_x[x] = 0$\\
+
+We need to find a matrix $B$ that retains as much information as possible when compressing data by projecting it onto the subspace spanned by the columns $b_1,b_2,..,b_M$ of $B$. Retaining most information after data compression is equivalent to capturing the largest amount of variance in the low-dimensional code.\\
+
+We maximize the variance of the low-dimensional code using a sequential approach. First, we consider the case when X is projected onto a single vector $b\in\R^D$ (basically, this is when the projection matrix $B$ is just a vector and we want to keep only one most important feature).  Our aim is to maximize the variance of the projected data, i.e:
+	\begin{align*}
+    &\text{maximize }V =\frac{1}{N}\sum_{n=1}^N z_n^2\\
+    &\text{where } z_n=b^Tx_n
+	\end{align*}
+
+Substituting this into the expression of $V$:
+	\begin{align*}
+	V &= \frac{1}{N}\sum_{n=1}^N (b^Tx_n)^2\\
+      &=\frac{1}{N}\sum_{n=1}^Nb^Tx_nx_n^Tb\\
+      &= b^T(\frac{1}{N}\sum_{n=1}^N x_nx_n^T)b\\
+      &= b^T S b
+	\end{align*}
+where $S$ is the covariance matrix of the original dataset.\\
+
+Here, we observe that increasing the magnitude of $b$ will increase $V$, thus making this optimization problem impossible to solve. Therefore, we restrict all solutions to $\|b\|^2 = 1$ which results in a constrained optimization problem:
+    \begin{align*}
+        &\text{find } \text{argmax}_b\ b^TSb\\
+        &\text{subject to}  \|b\|^2 = 1.
+    \end{align*}
+
+\textbf{The Lagrangian function for the problem is:}
+    \begin{align*}
+        L(B,\lambda) = b^TSb + \lambda(1-b^Tb)
+    \end{align*}
+Note that $b$ is a single vector then $\lambda$ is just a number (not a vector) because we only have one condition. Take the partial derivative of $L$ with respect to $b$ and $\lambda$  to $0$ :
+    \begin{align*}
+        & \frac{\partial L}{\partial b}=2b^TS + 2\lambda b^T = 0 \iff S.b = \lambda b\\
+        & \frac{\partial L}{\partial b} = 1 - b^Tb \iff b^Tb=1
+    \end{align*}
+
+At this point, we can see that $b$ and $\lambda$ are a part of eigenvector and eigenvalue $S$. Then we can write the variance $V$ as:
+$$V = b^TSb = b^T\lambda b = \lambda$$
+To maximize the variance of the low-dimensional code, we choose the basis vector associated with the largest eigenvalue principal component of the data covariance matrix. This eigenvector is called the first principal component.\\
+
+Therefore, if we want to find $M$ axes to project data, we can choose $M$ eigenvectors  $b_1, b_2, . . . , b_M$ of the data variance matrix that associates with $M$ largest eigenvalues, each eigenvector corresponding to a new axis of projection. The projection matrix $B$ is formed by those eigenvectors, i.e:  $B = [b_1, b_2, . . . , b_M]$.\\
+
+Finally, the projection of dataset $X \in \R^{D\times N}$ onto $B \in \R^{D\times M}$ given by $\widetilde{X} = B^TX$ will result, in new representation of data, i. e $\widetilde{X} \in \R^{M\times N}$ (M features and N samples).
+\newpage
+
+\large \section{Clustering}
+
+\Large {\textbf{Problem 1}}\\
+What are steps in K-means?\\
+
+\large{\textbf{Solution.}}
+
+\normalsize Steps in Kmeans:
+
+\begin{enumerate}
+    \item \textbf{Initialize centroids}: Select k random data points as initial centroids, which represent the center of each cluster.
+
+    \item \textbf{Assign data points to clusters}: Calculate the distance between each data point and all centroids. Assign each data point to the cluster with the nearest centroid.
+
+    \item \textbf{Recompute centroids}: Calculate the average of all data points belonging to each cluster. These new averages become the new centroids.
+    
+    \item \textbf{Repeat steps 2 and 3 }: Continue assigning data points to clusters based on the new centroids and recomputing the centroids until there are no significant changes in the assignments (convergence).\\
+\end{enumerate}
+
+\\
+\Large {\textbf{Problem 2}}\\
+Given pairs of points x,y with coordinates as follows: 
+ \\$(0.5; 0.5), (1; 0.5), (1; 1.5), (1.5; 1), (2.6; 2), (3; 2), (2.4; 2.5), (2.5; 3)$
+ 
+ \begin{enumerate}
+    \item[-] Apply k-means algorithm with centroid number equal to 2.
+    \item[-] Initialize the centroid center with random coordinates, run the k-means algorithm for 3 iterations and return the coordinates of 2 centroids.\\
+\end{enumerate}
+
+\large \textbf{Solution.}\\
+\normalsize
+
+Let $X &= [x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8]^T= \begin{bmatrix}
+0.5 & 0.5 \\
+1 & 0.5 \\
+1 & 1.5 \\
+1.5 & 1 \\
+2.6 & 2 \\
+3 & 2 \\
+2.4 & 2.5 \\
+2.5 & 3
+\end{bmatrix}$
+
+Random intialize centroids for 2 clusters :
+ \begin{enumerate}
+    \item[-] $c_1(0,0)$
+    \item[-] $c_2(2,2)$\\
+  \end{enumerate}
+\textbf{Iteration 1}:
+
+Distance from each point to centroids:
+
+   \begin{center}
+        \begin{tabular}{|c|c|c|c|}
+        \hline
+        x & $d(x,c_1)$ & $d(x,c_2)$ & cluster \\
+        
+        \hline
+        $x_1$ & 0.71 & 2.12 & $c_1$ \\
+        $x_2$ & 1.12 & 1.8 & $c_1$ \\
+        x_3 & 1.8 & 1.12 & c_2 \\
+        x_4 & 1.8 & 1.12 & c_2 \\
+        x_5 & 3.28 & 0.6 & c_2 \\
+        x_6 & 3.61 & 1 & c_2 \\
+        x_7 & 3.47 & 0.64 & c_2 \\
+        x_8 & 3.91 & 1.12 & c_2 \\
+        \hline
+    \end{tabular}
+    \end{center}
+   
+
+\\We see that after first iteration, cluster 1 include to point $x_1$ and $x_2$, while the remaining belong to cluster 2.\\
+
+Recalculate the coordinates of the centers for new groups based on the coordinates of the objects in the group:\\
+    \begin{align*}
+    &c_1 = (\frac{0.5 + 1}{2}, \frac{0.5 + 0.5}{2}) = (0.75, 0.5)\\
+    &c_2 = (\frac{1 + 1.5 + 2.6 + 3 + 2.4 + 2.5}{6}, \frac{1 + 1+ 2 + 2 + 2.5 + 3}{6}) = (\frac{8}{3},2)\\
+    \end{align*}
+
+\textbf{Iteration 2}:
+
+Distance from each point to centroids:
+
+   \begin{center}
+        \begin{tabular}{|c|c|c|c|}
+        \hline
+        x & $d(x,c_1)$ & $d(x,c_2)$ & cluster \\
+        
+        \hline
+        $x_1$ & 0.25 & 2.24 & $c_1$ \\
+        $x_2$ & 0.25 & 1.9 & $c_1$ \\
+        x_3 & 1.03 & 1.27 & c_1 \\
+        x_4 & 0.9 & 1.2 & c_1 \\
+        x_5 & 2.38 & 0.43 & c_2 \\
+        x_6 & 2.7 & 0.83 & c_2 \\
+        x_7 & 2.59 & 0.55 & c_2 \\
+        x_8 & 3.05 & 1.05 & c_2 \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+   Recalculate the center for the new group:\\
+    
+    \begin{align*}
+    &c_1 = (\frac{0.5 + 1 + 1 + 1.5}{4}, \frac{0.5 + 0.5 + 1 + 1}{4}) = (1, \frac{7}{8})\\
+    &c_2 = (\frac{2.6 + 3 + 2.4 + 2.5}{4}, \frac{2 + 2 + 2.5 + 3}{4}) = (\frac{21}{8},\frac{19}{8})\\
+    \end{align*}
+   
+\textbf{Iteration 3}:
+
+Distance from each point to centroids:
+
+   \begin{center}
+        \begin{tabular}{|c|c|c|c|}
+        \hline
+        x & $d(x,c_1)$ & $d(x,c_2)$ & cluster \\
+        
+        \hline
+        $x_1$ & 0.25 & 2.24 & $c_1$ \\
+        $x_2$ & 0.25 & 1.9 & $c_1$ \\
+        x_3 & 1.03 & 1.27 & c_1 \\
+        x_4 & 0.9 & 1.2 & c_1 \\
+        x_5 & 2.38 & 0.43 & c_2 \\
+        x_6 & 2.7 & 0.83 & c_2 \\
+        x_7 & 2.59 & 0.55 & c_2 \\
+        x_8 & 3.05 & 1.05 & c_2 \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+Objects in clusters do not change with last iteration, so centroids do not change.\\
+
+Final centroids coordinates : $c_1 = (1, \frac{7}{8}), c_2 = (\frac{21}{8},\frac{19}{8}) $
+
+\end{enumerate}
+\end{document}

@@ -314,7 +314,93 @@ Distance from each point to centroids:
 
 Objects in clusters do not change with last iteration, so centroids do not change.\\
 
-Final centroids coordinates : $c_1 = (1, \frac{7}{8}), c_2 = (\frac{21}{8},\frac{19}{8}) $
+Final centroids coordinates : $c_1 = (1, \frac{7}{8}), c_2 = (\frac{21}{8},\frac{19}{8})$\\
 
+\Large {\textbf{Problem 3}}\\
+\normalsize Draw 3 different cases where the data set when clustering does not work/is not good using k-means. State the reason.Suggest a suitable algorithm for that data set and explain why it is suitable\\
+
+\large \textbf{Solution.}\\\
+\normalsize
+3 different cases where the data set when clustering does not work/is not good using k-means:
+
+\begin{enumerate}
+    \item \textbf{Dataset with difference variances}:  Since k-means uses distance to centroids, points in high-variance regions get assigned greater distances, leading to skewed clusters.\\
+    \textbf{Better Alogrithm:} Gaussian Mixture Models (GMM) - GMM assumes data points come from a mixture of Gaussian distributions (bell curves). It can handle clusters with different variances by fitting individual Gaussians to each cluster.
+    $$\begin{aligned}
+    \centering
+    \includegraphics[width=0.4\linewidth]{different variances.png}
+    \label{fig:enter-label}
+    \end{aligned}$$
+    \item \textbf{Dataset are not in spherical cluster shape} : K-means works best with spherical clusters, where points are evenly distributed around a central point. Since K-means minimizes the sum of squared distances to centroids. This measurement might not accurately reflect the actual shape of non-spherical clusters.\\
+     \textbf{Better Alogrithm:} DBSCAN. DBSCAN doesn't rely on pre-defined shapes. It focuses on identifying dense regions (clusters) of points separated by areas with low density (noise).
+     $$\begin{aligned}
+    \centering
+    \includegraphics[width=0.3\linewidth]{non-spherical.png}
+    \label{fig:enter-label}
+    \end{aligned}$$
+    \item \textbf{Datasets contains noise and outliers} :  K-means is sensitive to outliers (distant data points) and noise (random data points). Outliers can distort the centroids, leading to poorly defined clusters.\\
+    \textbf{Better Algorithm}: DBSCAN - DBSCAN is robust to outliers. It can identify core points (densely surrounded) and separate them from outliers, which are typically isolated points with few neighbors.\\
+    $$\begin{aligned}
+    \centering
+    \includegraphics[width=0.3\linewidth]{noise.png}
+    \label{fig:enter-label}
+    \end{aligned}$$
 \end{enumerate}
+
+\Large {\textbf{Problem 4}}\\
+\large  GMM algorithm
+\begin{enumerate}
+ \item Write Loss function for the algorithm
+ \item The word loss function indicates the approach of the GMM algorithm to optimize this loss (E-M in
+slides). Explain the meaning of E-step and M-step (using math formula)\\
+\end{enumerate}
+
+\large \textbf{Solution.}\\\
+\normalsize
+Objective function for GMM is log-likelihood function:
+$$I(\theta) = \sum^N_{n=1}log(\sum^K_{k=1} \pi_k N(x_n|\mu_k,\Sigma_k)$$
+Taking partial derrivatives and setting to zero, we have:
+    \begin{align*}
+        &\mu_k = \frac{1}{N_k}\sum_{n=1}^N \gamma(z_{nk})x_n\\
+        &\Sigma_k = \frac{1}{N_k}\sum_{n=1}^N\gamma(z_{nk})(x_n - \mu_k)(x_n-\mu_k)^T\\
+        &\pi_k = \frac{N_k}{N}  
+    \end{align*}
+where $\gamma(z_{nk})$ is the responsibility of component k for data point.\\
+We see that three model parameters $\{\mu_k, \Sigma_k, \pi_k\}$ depend
+on $\gamma(z_{nk})$\\ $\implies$ iterative scheme can be used.\\
+
+\textbf{EM Steps}:\\
+First we randomly initialize the parameters $\{\mu_k, \Sigma_k, \pi_k\}$, then iterative the following 2 steps (Repeat until convergence): 
+\begin{enumerate}
+    \item[-] \textbf{E-step} (Expectation Step): Calculate responsibilities using current parameters:
+    $$\gamma(z_{nk}) = \frac{p(z_{nk}=1)p(x_n|z_{nk}=1)}{\sum_{j=1}^Kp(z_{nj}=1)p(x_n|z_{nj}=1)}$$
+    \item[-] \textbf{M-step} (Maximization Step):  Re-estimate parameters using these $\gamma(z_{nk})$:
+        \begin{align*}
+        &\mu_k = \frac{1}{N_k}\sum_{n=1}^N \gamma(z_{nk})x_n\\
+        &\Sigma_k = \frac{1}{N_k}\sum_{n=1}^N\gamma(z_{nk})(x_n - \mu_k)(x_n-\mu_k)^T\\
+        &\pi_k = \frac{N_k}{N}\\
+    \end{align*}
+\end{enumerate}
+
+
+\Large {\textbf{Problem 5}}\\
+List the steps of the GMM algorithm\\
+
+
+\large \textbf{Solution.}\\
+\normalsize Steps of the GMM 
+\begin{enumerate}
+   \item Decide number of Distributions
+   \item Initialize random mean and variance for each distribution
+   \item \textbf{E Step}: Generate distribution based on mean and variance coming from previous step
+   \item \textbf{M Step}:
+   \begin{enumerate}
+        \item [-] Calculate the likelihood of each data point belong to each distribution above generated.
+        \item[-] And update the mean and variance, in order to maximize the likelihood for each data point.
+   \end{enumerate}
+   \item Repeat until convergence.
+\end{enumerate}
+
+
+
 \end{document}
